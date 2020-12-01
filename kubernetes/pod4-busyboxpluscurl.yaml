@@ -1,0 +1,14 @@
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: curl
+  labels:
+    app: curl
+spec:
+  containers:
+    - name: curl
+      image: radial/busyboxplus:curl
+      args:
+      - sleep
+      - "1000000"

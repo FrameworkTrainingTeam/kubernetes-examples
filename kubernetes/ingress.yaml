@@ -1,0 +1,46 @@
+# POD
+kind: Pod
+apiVersion: v1
+metadata:
+  name: apple-pod
+  labels:
+    app: apple
+spec:
+  containers:
+    - name: apple-app
+      image: hashicorp/http-echo
+      args:
+        - "-text=apple"
+
+---
+# SERVICE
+kind: Service
+apiVersion: v1
+metadata:
+  name: apple-service
+spec:
+  selector:
+    app: apple
+  ports:
+    - port: 5678 # Default port for image
+
+---
+# INGRESS
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apple-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "*.eastus.cloudapp.azure.com"
+    http:
+      paths:
+        - path: /apple
+          backend:
+            serviceName: apple-service
+            servicePort: 5678
+
+            

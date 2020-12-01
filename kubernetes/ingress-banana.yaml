@@ -1,0 +1,48 @@
+# POD
+kind: Pod
+apiVersion: v1
+metadata:
+  name: banana-pod
+  labels:
+    app: banana
+spec:
+  containers:
+    - name: banana-app
+      image: hashicorp/http-echo
+      args:
+        - "-text=banana"
+
+---
+# SERVICE
+kind: Service
+apiVersion: v1
+metadata:
+  name: banana-service
+spec:
+  selector:
+    app: banana
+  ports:
+    - port: 5678 # Default port for image
+
+---
+# INGRESS
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apple-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "*.eastus.cloudapp.azure.com"
+    http:
+      paths:
+        - path: /apple
+          backend:
+            serviceName: apple-service
+            servicePort: 5678
+        - path: /banana
+          backend:
+            serviceName: banana-service
+            servicePort: 5678
